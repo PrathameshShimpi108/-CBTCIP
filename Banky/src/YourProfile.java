@@ -100,7 +100,7 @@ public class YourProfile extends Welcome
 	    break;
 	    case 6: 
 	    	 Welcome ho=new Welcome(); 	
-	    		ho.welcome2();
+	    		ho.welcome();
 	    default:
 	    	System.out.println("invalid input");
 	    	profile2(); 

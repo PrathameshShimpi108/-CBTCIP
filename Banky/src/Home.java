@@ -1,23 +1,107 @@
 import java.util.Scanner;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Scanner;
 class Home extends Welcome
 {
-//	protected static long accountno;
-	
+	static String fullName;
+	static String accountno;
+    static double balance;
+    static String username;
+    static String password;
+    static String IFSC;
+    static String UPIid;
+    static long custid;
+    static long phonenum;
+    
+
 	public static void home()
 	{
-		SignUp r=new SignUp();
-		String Username=r.getUserName();
-		System.out.println(" -------------------------------------------------------------");
-		System.out.print("|");
-		System.out.print("                           Accounts                           ");
-		System.out.println("|");
-		System.out.println(" -------------------------------------------------------------");
-		System.out.println("______________________________________________________________________");
-		System.out.println("                                                                      ");
-		System.out.println("Savings Account:                                              ");
-		System.out.println(accountno);
-		System.out.println(balance);
-		System.out.println("______________________________________________________________________");
+		fetchUserDetails();
+		displayAccounts();
+	    Welcome ref1=new Welcome();
+	    Scanner s = new Scanner(System.in);
+		int select = s.nextInt();
+		switch(select)
+		{
+		case 1: 
+				Accounts2 acc=new Accounts2();
+				acc.accounts2();
+		break;
+		case 2: 
+			Details2 det=new Details2();
+			det.details2();
+		break;
+		case 3:
+			Statements2 state=new Statements2();
+			state.statements2();
+		break;
+		case 4:
+			ShareDetails2 share=new ShareDetails2();
+			share.sharedetails2();
+		break;
+		case 5:
+			DueBills2 due=new DueBills2();
+			due.duebills2();
+		break;
+		case 6: 
+			ref1.welcome();
+		break;
+		default:
+			System.out.println("invalid input");
+			home();
+		break;
+		}
+	}
+	
+	private static void fetchUserDetails() {
+        ResultSet userDetails = null;
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/bank?user=root&password=root");
+             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM user_details WHERE phone_number = ?")) {
+            stmt.setString(1, phoneno);
+            userDetails = stmt.executeQuery();
+            if (userDetails != null && userDetails.next()) {
+                accountno = userDetails.getString("account_no");
+                fullName = userDetails.getString("full_name");
+                Bname = userDetails.getString("bank_name");
+                balance = userDetails.getDouble("balance");
+                IFSC=userDetails.getString("ifsc_code");
+                UPIid=userDetails.getString("upi_id");
+                custid=userDetails.getLong("customer_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (userDetails != null) {
+                try {
+                    userDetails.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
+
+    
+	
+	private static void displayAccounts() {
+		
+        System.out.println(" -------------------------------------------------------------");
+        System.out.print("|");
+        System.out.print("                           Accounts                           ");
+        System.out.println("|");
+        System.out.println(" -------------------------------------------------------------");
+        System.out.println("______________________________________________________________________");
+        System.out.println("                                                                      ");
+        System.out.println("Savings Account:                                              ");
+        System.out.println(accountno);
+        System.out.println(balance);
+        System.out.println("______________________________________________________________________");
 		System.out.println("                                                                      ");
 		System.out.println("1.Open Accounts");
 		System.out.println("2.Show Account Details");
@@ -26,57 +110,25 @@ class Home extends Welcome
 		System.out.println("5.Due Bills");
 		System.out.println("6.Back");
 	    System.out.println("______________________________________________________________________");
-	    System.out.println("Select Option:");
-	    Welcome ref1=new Welcome();		
-	    Scanner s = new Scanner(System.in);
-		int select = s.nextInt();
-		switch(select)
-		{
-		case 1: 
-				Accounts acc=new Accounts();
-				acc.accounts();
-		break;
-		case 2: 
-				Details det=new Details();
-				det.details();
-			
-		break;
-		case 3:
-				Statements stat=new Statements();
-				stat.statements();
-		break;
-		case 4:
-				ShareDetails share=new ShareDetails();
-				share.sharedetails();
-		break;
-		case 5:
-				DueBills due =new DueBills();
-				due.duebills();
-		break;
-		case 6: 
-				ref1.welcome();
-		break;
-		default:
-			System.out.println("invalid input");
-			home();
-		break;
-		}
-	}
+        System.out.println("                                                                      ");
+        System.out.println("Select Option:");
+    }
+
 }
 
-class Accounts extends Home
+class Accounts2 extends Home
 {
 	
-	Accounts()
-	{
-		SignUp.accountno=accountno;
-		SignUp.balance=balance;
-		
-	}
-	public void accounts()
+//	Accounts2()
+//	{
+//		this.accountno=accountno;
+//		this.balance=balance;
+//		
+//	}
+	public void accounts2()
 	{
 		System.out.println("Savings Account");
-		System.out.println(accountno);
+		System.out.println(Home.accountno);
 		
 		System.out.println("______________________________________________________________________");
 		System.out.println("Available Balance");
@@ -87,51 +139,38 @@ class Accounts extends Home
 		switch(A)
 		{
 		case 1: home();
-		break;
-		default:
-			System.out.println("invalid input");
-			accounts();
-		break;
 		}
 	}
 }
 
-class Details extends Home
+class Details2 extends Home
 {
-	Details()
+	Details2()
 	{
 		
-		SignUp.Bname=Bname;
-		SignUp.accountno=accountno;
+		this.Bname=Bname;
+		this.accountno=accountno;
 	}
-	public void details()
+	public void details2()
 	{
 		SignUp ref=new SignUp();
 		System.out.println("Account Holders: "+" " +fullName);
 		System.out.println("Branch: "+ Bname);
 		System.out.println("IFSC: " +IFSC);
-		System.out.println( ref.toString());
-//		System.out.println("Phone Number: "+ref.getPhoneNum());
+		System.out.println("Username: "+ Uname);
+		System.out.println("Phone Number: "+phoneno);
 		System.out.println("Account Number: "+accountno);
 		System.out.println("1.Back");
 		int D=sc.nextInt();
 		switch(D)
 		{
 		case 1: home();
-		default:
-			System.out.println("invalid input");
-			details();
-		break;
 		}
 	}
 }
-class Statements extends Home
+class Statements2 extends Home
 {
-	Statements()
-	{
-	
-	}
-	public void statements()
+	public void statements2()
 	{
 		System.out.println("______________________________________________________________________");
 		System.out.println("                                                                      ");
@@ -149,17 +188,12 @@ class Statements extends Home
 		switch(St)
 		{
 		case 1: home();
-		default:
-			System.out.println("invalid input");
-			statements();
-		break;
 		}
 	}
 }
-class ShareDetails extends Home
+class ShareDetails2 extends Home
 {
-	
-	public void sharedetails()
+	public void sharedetails2()
 	{
 		System.out.println("----------------------------------------------------------------------");
 		System.out.println("Send to:-");
@@ -176,10 +210,6 @@ class ShareDetails extends Home
 		switch(Sh)
 		{
 		case 1: home();
-		default:
-			System.out.println("invalid input");
-			sharedetails();
-		break;
 		}
 	}
 
@@ -187,13 +217,9 @@ class ShareDetails extends Home
 }
 
 
-class DueBills extends Home
+class DueBills2 extends Home
 {
-	DueBills()
-	{
-   
-	}
-	public void duebills()
+	public void duebills2()
 	{
 		System.out.println("Register your bills and pay all your bills with one click");
 	    System.out.println(" -----------------");
@@ -206,12 +232,7 @@ class DueBills extends Home
 		switch(du)
 		{
 		case 1: home();
-		default:
-			System.out.println("invalid input");
-			duebills();
-		break;
 		}
 	}
 }
-
 

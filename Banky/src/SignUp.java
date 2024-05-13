@@ -95,8 +95,9 @@ public class SignUp implements SA, Log {
             System.out.println("Authentication Successful");
             createBankAccount();
             insertUserIntoDatabase();
-            Welcome ref1 = new Welcome();
-            ref1.welcome();
+//            Welcome ref1 = new Welcome();
+//            ref1.welcome();
+            login();
         } else {
             System.out.println("Authentication Failed");
             signup();
@@ -127,7 +128,7 @@ public class SignUp implements SA, Log {
                     if (Uname.equals(dbUsername) && Pswd.equals(dbPassword)) {
                         System.out.println("Login Successful");
                         Welcome ref1= new Welcome();
-                        ref1.welcome2();
+                        ref1.welcome();
                     } else {
                         System.out.println("Incorrect username or password");
                         login();
